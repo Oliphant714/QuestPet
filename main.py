@@ -1,5 +1,13 @@
 import tkinter as tk
 
+class Task:
+    def __init__(self, description, xp_reward):
+        self.description = description
+        self.xp_reward = xp_reward
+        self.completed = False
+
+    def complete(self):
+        self.completed = True
 
 class Dragon:
     def __init__(self, name):
@@ -22,9 +30,11 @@ class Dragon:
 
     def level_up(self):
         self.level += 1
-        self.growthpoints += 1
+        
         self.xp = self.xp - self.xp_to_next_level
         self.xp_to_next_level = int(self.xp_to_next_level * 1.5)
+        if self.level != 4 and self.level != 7:
+            self.growthpoints += 1
         self.update_stage()
 
     def update_stage(self):
@@ -47,6 +57,11 @@ class Dragon:
         )
 
 
+task = Task("Math Homework", 25)
+   
+
+
+
 # --- Create Dragon ---
 dragon = Dragon("Ember")
 
@@ -58,15 +73,22 @@ window.title("QuestPet")
 status_label = tk.Label(window, text=dragon.get_status_text(), font=("Arial", 12))
 status_label.pack(pady=10)
 
+task_label = tk.Label(window, text=f"Task: {task.description}", font=("Arial", 10))
+task_label.pack(pady=5)
 
 # --- Button Action ---
 def complete_task():
-    dragon.gain_xp(25)
-    status_label.config(text=dragon.get_status_text())
+    if not task.complete():
+        task.complete()
+        dragon.gain_xp(task.xp_reward)
+        status_label.config(text=dragon.get_status_text())
+        task_label.config(text=f"Task: {task.description} (Completed)")
+    else:
+        print("Task already completed!")
 
 
 # --- Button ---
-xp_button = tk.Button(window, text="Complete Task (+25 XP)", command=complete_task)
+xp_button = tk.Button(window, text="Complete Task", command=complete_task)
 xp_button.pack(pady=10)
 
 # --- Start App ---
