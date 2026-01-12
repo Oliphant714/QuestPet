@@ -1,12 +1,15 @@
 import tkinter as tk
 
+active_tasks = []
+completed_tasks = []
+
 class Task:
     def __init__(self, description, xp_reward):
         self.description = description
         self.xp_reward = xp_reward
         self.completed = False
 
-    def complete(self):
+    def mark_complete(self):
         self.completed = True
 
 class Dragon:
@@ -15,6 +18,8 @@ class Dragon:
         self.level = 1
         self.xp = 0
         self.xp_to_next_level = 100
+        
+        #Core Stats
         self.strength = 1
         self.dexterity = 1
         self.intelligence = 1
@@ -33,19 +38,21 @@ class Dragon:
         
         self.xp = self.xp - self.xp_to_next_level
         self.xp_to_next_level = int(self.xp_to_next_level * 1.5)
-        if self.level != 4 and self.level != 7:
-            self.growthpoints += 1
+        self.award_growth_points()
         self.update_stage()
+
+    def award_growth_points(self):
+        self.growthpoints += 1  # 1 growth point per level
+        if self.level == 4:
+            self.growthpoints += 2
+        elif self.level == 7:
+            self.growthpoints += 4
 
     def update_stage(self):
         if self.level >= 7:
             self.stage = "Young Dragon"
-            if self.level == 7:
-                self.growthpoints += 5  # Bonus growth points on reaching Young Dragon
         elif self.level >= 4:
             self.stage = "Wyrmling"
-            if self.level == 4:
-                self.growthpoints += 3  # Bonus growth points on reaching Wyrmling
         else:
             self.stage = "Hatchling"
 
@@ -75,8 +82,8 @@ task_label.pack(pady=5)
 
 # --- Button Action ---
 def complete_task():
-    if not task.complete():
-        task.complete()
+    if not task.completed:
+        task.mark_complete()
         dragon.gain_xp(task.xp_reward)
         status_label.config(text=dragon.get_status_text())
         task_label.config(text=f"Task: {task.description} (Completed)")
