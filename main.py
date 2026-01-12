@@ -56,11 +56,8 @@ class Dragon:
             f"XP: {self.xp} / {self.xp_to_next_level}"
         )
 
-
+# - - - Create Task ---
 task = Task("Math Homework", 25)
-   
-
-
 
 # --- Create Dragon ---
 dragon = Dragon("Ember")
