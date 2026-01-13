@@ -45,6 +45,26 @@ class Dragon:
         elif self.level == 7:
             self.growthpoints += 4
 
+    def spend_growth_point(self, stat):
+        if self.growthpoints <= 0:
+            print("No growth points available.")
+            return
+
+        if stat == "strength":
+            self.strength += 1
+        elif stat == "dexterity":
+            self.dexterity += 1
+        elif stat == "intelligence":
+            self.intelligence += 1
+        elif stat == "charisma":
+            self.charisma += 1
+        else:
+            print("Invalid stat.")
+            return
+
+        self.growthpoints -= 1
+        return True
+
     def update_stage(self):
         if self.level >= 7:
             self.stage = "Young Dragon"
@@ -57,7 +77,10 @@ class Dragon:
         return (
             f"🐉 {self.name} the Dragon\n"
             f"Level: {self.level} ({self.stage})\n"
-            f"XP: {self.xp} / {self.xp_to_next_level}"
+            f"XP: {self.xp} / {self.xp_to_next_level}\n"
+            f"Growth Points: {self.growthpoints}\n"
+            f"STR: {self.strength} | DEX: {self.dexterity}\n"
+            f"INT: {self.intelligence} | CHA: {self.charisma}\n"
         )
 
 # - - - Task Lists ---
@@ -134,6 +157,20 @@ def complete_task():
 # --- Button ---
 xp_button = tk.Button(window, text="Complete Task", command=complete_task)
 xp_button.pack(pady=10)
+
+stat_frame = tk.Frame(window)
+stat_frame.pack(pady=10)
+
+def increase_stat(stat_name):
+    success = dragon.spend_growth_point(stat_name)
+    if success:
+        status_label.config(text=dragon.get_status_text())
+
+# Stat Buttons
+tk.Button(stat_frame, text="Increase STR", command=lambda: increase_stat("strength")).grid(row=0, column=0, padx=5)
+tk.Button(stat_frame, text="Increase DEX", command=lambda: increase_stat("dexterity")).grid(row=0, column=1, padx=5)
+tk.Button(stat_frame, text="Increase INT", command=lambda: increase_stat("intelligence")).grid(row=0, column=2, padx=5)
+tk.Button(stat_frame, text="Increase CHA", command=lambda: increase_stat("charisma")).grid(row=0, column=3, padx=5)
 
 # --- Start App ---
 window.mainloop()
