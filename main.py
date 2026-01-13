@@ -47,7 +47,6 @@ class Dragon:
 
     def spend_growth_point(self, stat):
         if self.growthpoints <= 0:
-            print("No growth points available.")
             return
 
         if stat == "strength":
