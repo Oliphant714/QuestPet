@@ -130,12 +130,14 @@ def refresh_completed_tasks():
 status_label = tk.Label(window, text=dragon.get_status_text(), font=("Arial", 12))
 status_label.pack(pady=10)
 
+message_label = tk.Label(window, text="", font=("Arial", 10), fg="red")
+message_label.pack(pady=5)
 
 # # --- Button Action ---
 def complete_task():
     selection = active_listbox.curselection()
     if not selection:
-        print("No task selected.")
+        message_label.config(text="No task selected!")
         return
 
     index = selection[0]
@@ -151,6 +153,7 @@ def complete_task():
     refresh_completed_tasks()
 
     status_label.config(text=dragon.get_status_text())
+    message_label.config(text=f"Completed: {task.description}")
 
 
 
@@ -165,6 +168,9 @@ def increase_stat(stat_name):
     success = dragon.spend_growth_point(stat_name)
     if success:
         status_label.config(text=dragon.get_status_text())
+        message_label.config(text="")
+    else:
+        message_label.config(text="Not enough growth points!")
 
 # Stat Buttons
 tk.Button(stat_frame, text="Increase STR", command=lambda: increase_stat("strength")).grid(row=0, column=0, padx=5)
