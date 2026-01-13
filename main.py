@@ -15,6 +15,7 @@ class Dragon:
         self.level = 1
         self.xp = 0
         self.xp_to_next_level = 100
+        self.personality = "neutral"
         
         #Core Stats
         self.strength = 1
@@ -45,25 +46,6 @@ class Dragon:
         elif self.level == 7:
             self.growthpoints += 4
 
-    def spend_growth_point(self, stat):
-        if self.growthpoints <= 0:
-            return
-
-        if stat == "strength":
-            self.strength += 1
-        elif stat == "dexterity":
-            self.dexterity += 1
-        elif stat == "intelligence":
-            self.intelligence += 1
-        elif stat == "charisma":
-            self.charisma += 1
-        else:
-            print("Invalid stat.")
-            return
-
-        self.growthpoints -= 1
-        return True
-
     def update_stage(self):
         if self.level >= 7:
             self.stage = "Young Dragon"
@@ -82,11 +64,79 @@ class Dragon:
             f"INT: {self.intelligence} | CHA: {self.charisma}\n"
         )
 
+    def update_personality(self):
+        stats = {
+            "Strength": self.strength,
+            "Dexterity": self.dexterity,
+            "Intelligence": self.intelligence,
+            "Charisma": self.charisma
+        }
+        
+        max_value = max(stats.values())
+        top_stats = [stat for stat, value in stats.items() if value == max_value]
+
+        if len(top_stats) == 1:
+            self.personality = top_stats[0].lower()
+    
+    def get_personality(self):
+        return self.personality
+
+    def get_reaction(self, context):
+        personality = self.personality
+        reactions = {
+            "neutral": {
+                "task_complete": "I feel... stronger.  Thank you for helping me grow.",
+                "no_points": "I'm not ready yet... but I will be.",
+                "stat_up": "Something inside me is changing..."
+            },
+            "strength": {
+            "task_complete": "Another victory! Your discipline fuels my power!",
+            "no_points": "We are not ready yet. Train harder!",
+            "stat_up": "I feel my muscles surge with strength!"
+        },
+        "dexterity": {
+            "task_complete": "Quick and clean! Just how I like it!",
+            "no_points": "Hehe… we’ll get there soon!",
+            "stat_up": "Ooo, I feel lighter already!"
+        },
+        "intelligence": {
+            "task_complete": "Excellent work. Knowledge is our true weapon.",
+            "no_points": "Patience. Growth requires preparation.",
+            "stat_up": "My thoughts feel… clearer."
+        },
+        "charisma": {
+            "task_complete": "I’m so proud of you! That was amazing!",
+            "no_points": "It’s okay, we’ll grow together!",
+            "stat_up": "Ooo~ I can feel my presence growing!"
+        }
+        }
+        return reactions[personality].get(context, "")
+
+    def spend_growth_point(self, stat):
+        if self.growthpoints <= 0:
+            return False
+
+        if stat == "strength":
+            self.strength += 1
+        elif stat == "dexterity":
+            self.dexterity += 1
+        elif stat == "intelligence":
+            self.intelligence += 1
+        elif stat == "charisma":
+            self.charisma += 1
+        else:
+            print("Invalid stat.")
+            return
+
+        self.growthpoints -= 1
+        self.update_personality()
+        return True
+
 # - - - Task Lists ---
 active_tasks = [
-    Task("Math Homework", 25),
-    Task("English Essay", 50),
-    Task("Study Biology", 30)
+    Task("Math Homework", 100),
+    Task("English Essay", 200),
+    Task("Study Biology", 400)
 ]
 
 completed_tasks = []
@@ -124,7 +174,6 @@ def refresh_completed_tasks():
     for task in completed_tasks:
         completed_listbox.insert(tk.END, task.description)
 
-
 # --- Label to Show Dragon Info ---
 status_label = tk.Label(window, text=dragon.get_status_text(), font=("Arial", 12))
 status_label.pack(pady=10)
@@ -132,7 +181,7 @@ status_label.pack(pady=10)
 message_label = tk.Label(window, text="", font=("Arial", 10), fg="red")
 message_label.pack(pady=5)
 
-# # --- Button Action ---
+# # --- Complete Task Button Action ---
 def complete_task():
     selection = active_listbox.curselection()
     if not selection:
@@ -152,11 +201,9 @@ def complete_task():
     refresh_completed_tasks()
 
     status_label.config(text=dragon.get_status_text())
-    message_label.config(text=f"Completed: {task.description}")
+    message_label.config(text=dragon.get_reaction("task_complete"))
 
-
-
-# --- Button ---
+# --- Complete Task Button ---
 xp_button = tk.Button(window, text="Complete Task", command=complete_task)
 xp_button.pack(pady=10)
 
@@ -167,11 +214,11 @@ def increase_stat(stat_name):
     success = dragon.spend_growth_point(stat_name)
     if success:
         status_label.config(text=dragon.get_status_text())
-        message_label.config(text="")
+        message_label.config(text=dragon.get_reaction("stat_up"))
     else:
-        message_label.config(text="Not enough growth points!")
+        message_label.config(text=dragon.get_reaction("no_points"))
 
-# Stat Buttons
+# --- Stat Buttons ---
 tk.Button(stat_frame, text="Increase STR", command=lambda: increase_stat("strength")).grid(row=0, column=0, padx=5)
 tk.Button(stat_frame, text="Increase DEX", command=lambda: increase_stat("dexterity")).grid(row=0, column=1, padx=5)
 tk.Button(stat_frame, text="Increase INT", command=lambda: increase_stat("intelligence")).grid(row=0, column=2, padx=5)
