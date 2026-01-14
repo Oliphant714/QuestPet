@@ -83,6 +83,32 @@ class Dragon:
     def get_personality(self):
         return self.personality
 
+    def get_role(self):
+        stats = {
+            "strength": self.strength,
+            "dexterity": self.dexterity,
+            "intelligence": self.intelligence,
+            "charisma": self.charisma
+        }
+        max_value = max(stats.values())
+        top_stats = [stat for stat, value in stats.items() if value == max_value]
+        
+        if len(top_stats) > 1:
+            return self.role_bias
+        
+        dominant_stat = top_stats[0]
+
+        if dominant_stat == "strength":
+            return "enforcer"
+        elif dominant_stat == "dexterity":
+            return "playful"
+        elif dominant_stat == "intelligence":
+            return "mentor"
+        elif dominant_stat == "charisma":
+            return "companion"
+        else:
+            return self.role_bias
+
     def get_reaction(self, context):
         personality = self.personality
         reactions = {
@@ -113,6 +139,30 @@ class Dragon:
             }
         }
         return reactions[personality].get(context, "")
+
+    def get_role_based_reaction(self, context):
+        role = self.get_role()
+
+        responses = {
+            "mentor": {
+                "task_complete": "Well done. Each step builds your future.",
+                "idle": "There is always something worth improving."
+            },
+            "companion": {
+                "task_complete": "Yesss! We did it together!",
+                "idle": "Hey… want to do something with me?"
+            },
+            "enforcer": {
+                "task_complete": "Good. Discipline is victory.",
+                "idle": "We should be training."
+            },
+            "playful": {
+                "task_complete": "Hehe! That was easy!",
+                "idle": "Ooo~ I’m bored. Let’s do something!"
+            }
+        }
+
+        return responses.get(role, {}).get(context, "")
 
     def spend_growth_point(self, stat):
         if self.growthpoints <= 0:
