@@ -272,7 +272,7 @@ class Dragon:
 
         return responses.get(role, {}).get(context, "")
 
-# - - - Task Lists ---
+# --- Task Lists ---
 active_tasks = [
     Task("Math Homework", 100),
     Task("English Essay", 200),
@@ -326,7 +326,7 @@ status_label.pack(pady=10)
 message_label = tk.Label(window, text="", font=("Arial", 10), fg="red")
 message_label.pack(pady=5)
 
-# # --- Complete Task Button Action ---
+# --- Complete Task Button Action ---
 def complete_task():
     selection = active_listbox.curselection()
     if not selection:
