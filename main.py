@@ -56,6 +56,18 @@ class Dragon:
         else:
             self.stage = "Hatchling"
 
+    def react(self, context, user_state):
+        role = self.get_role()
+        personality = self.personality
+
+        if user_state["idle_cycles"] >= 3:
+            return self.get_callout_line(role, "idle")
+        
+        if user_state["tasks_skipped"] >= 2:
+            return self.get_callout_line(role, "avoidance")
+        
+        return self.get_standard_line(role, context, personality)
+
     def get_status_text(self):
         return (
             f"🐉 {self.name} the Dragon\n"
@@ -216,15 +228,64 @@ class Dragon:
         options = thoughts.get(self.personality, thoughts["neutral"])
         return random.choice(options)
 
+    def get_callout_line(self, role, situation):
+        callouts = {
+            "mentor": {
+                "idle": "You’re stalling. That won’t get you where you want to go.",
+                "avoidance": "Avoiding your work doesn’t make it disappear. Face it."
+            },
+            "companion": {
+                "idle": "Hey… you’ve been zoning out. Wanna talk about it?",
+                "avoidance": "You keep skipping things. Are you okay?"
+            },
+            "enforcer": {
+                "idle": "Enough waiting. Move.",
+                "avoidance": "Discipline is slipping. Fix it."
+            },
+            "playful": {
+                "idle": "Aww, don’t be bored! Let’s do something fun!",
+                "avoidance": "Hehe, you keep dodging your tasks! That’s silly!"
+            }
+        }
+
+        return callouts.get(role, {}).get(situation, "")
+
+    def get_standard_line(self, role, context):
+        responses = {
+            "mentor": {
+                "task_complete": "Good. Progress is earned.",
+                "stat_up": "Growth acknowledged."
+            },
+            "companion": {
+                "task_complete": "We did it!! I’m proud of you!",
+                "stat_up": "Ooo~ you’re getting stronger!"
+            },
+            "enforcer": {
+                "task_complete": "Objective complete.",
+                "stat_up": "Power increased."
+            },
+            "layful": {
+                "task_complete": "Yay! That was fun!",
+                "stat_up": "Woohoo! I feel awesome!"
+            }
+        }
+
+        return responses.get(role, {}).get(context, "")
+
 # - - - Task Lists ---
 active_tasks = [
     Task("Math Homework", 100),
     Task("English Essay", 200),
     Task("Study Biology", 400)
 ]
-
 completed_tasks = []
 
+# --- User State ---
+user_state = {
+    "tasks_skipped": 0,
+    "idle_cycles": 0,
+    "last_action": None
+}
 
 # --- Create Dragon ---
 dragon = Dragon("Ember")
@@ -277,6 +338,10 @@ def complete_task():
 
     task.mark_complete()
     dragon.gain_xp(task.xp_reward)
+
+    user_state["tasks_skipped"] = 0
+    user_state["idle_cycles"] = 0
+    user_state["last_action"] = "task_complete"
 
     active_tasks.remove(task)
     completed_tasks.append(task)
