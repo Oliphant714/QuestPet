@@ -1,4 +1,5 @@
 import tkinter as tk
+import random
 
 class Task:
     def __init__(self, description, xp_reward):
@@ -16,6 +17,7 @@ class Dragon:
         self.xp = 0
         self.xp_to_next_level = 100
         self.personality = "neutral"
+        self.role_bias = "mentor"
         
         #Core Stats
         self.strength = 1
@@ -90,25 +92,25 @@ class Dragon:
                 "stat_up": "Something inside me is changing..."
             },
             "strength": {
-            "task_complete": "Another victory! Your discipline fuels my power!",
-            "no_points": "We are not ready yet. Train harder!",
-            "stat_up": "I feel my muscles surge with strength!"
-        },
-        "dexterity": {
-            "task_complete": "Quick and clean! Just how I like it!",
-            "no_points": "Hehe… we’ll get there soon!",
-            "stat_up": "Ooo, I feel lighter already!"
-        },
-        "intelligence": {
-            "task_complete": "Excellent work. Knowledge is our true weapon.",
-            "no_points": "Patience. Growth requires preparation.",
-            "stat_up": "My thoughts feel… clearer."
-        },
-        "charisma": {
-            "task_complete": "I’m so proud of you! That was amazing!",
-            "no_points": "It’s okay, we’ll grow together!",
-            "stat_up": "Ooo~ I can feel my presence growing!"
-        }
+                "task_complete": "Another victory! Your discipline fuels my power!",
+                "no_points": "We are not ready yet. Train harder!",
+                "stat_up": "I feel my muscles surge with strength!"
+            },
+            "dexterity": {
+                "task_complete": "Quick and clean! Just how I like it!",
+                "no_points": "Hehe… we’ll get there soon!",
+                "stat_up": "Ooo, I feel lighter already!"
+            },
+            "intelligence": {
+                "task_complete": "Excellent work. Knowledge is our true weapon.",
+                "no_points": "Patience. Growth requires preparation.",
+                "stat_up": "My thoughts feel… clearer."
+            },
+            "charisma": {
+                "task_complete": "I’m so proud of you! That was amazing!",
+                "no_points": "It’s okay, we’ll grow together!",
+                "stat_up": "Ooo~ I can feel my presence growing!"
+            }
         }
         return reactions[personality].get(context, "")
 
@@ -131,6 +133,38 @@ class Dragon:
         self.growthpoints -= 1
         self.update_personality()
         return True
+
+    def get_idle_thought(self):
+        thoughts = {
+            "strength": [
+                "We should train again soon. Discipline builds power.",
+                "Idleness dulls the blade.",
+                "Every moment is a chance to grow stronger."
+            ],
+            "dexterity": [
+                "Hehe, ready to jump back in?",
+                "We could totally knock out a quick task!",
+                "Sitting still is boring~"
+            ],
+            "intelligence": [
+                "There is much yet to learn.",
+                "I’ve been thinking about efficient study methods.",
+                "Knowledge grows when it is pursued."
+            ],
+            "charisma": [
+                "Hey… want to do something together?",
+                "I like it when we’re productive as a team.",
+                "We make a good pair, you know."
+            ],
+            "neutral": [
+                "I am here.",
+                "Whenever you’re ready.",
+                "We will grow, in time."
+        ]
+        }
+
+        options = thoughts.get(self.personality, thoughts["neutral"])
+        return random.choice(options)
 
 # - - - Task Lists ---
 active_tasks = [
@@ -223,6 +257,13 @@ tk.Button(stat_frame, text="Increase STR", command=lambda: increase_stat("streng
 tk.Button(stat_frame, text="Increase DEX", command=lambda: increase_stat("dexterity")).grid(row=0, column=1, padx=5)
 tk.Button(stat_frame, text="Increase INT", command=lambda: increase_stat("intelligence")).grid(row=0, column=2, padx=5)
 tk.Button(stat_frame, text="Increase CHA", command=lambda: increase_stat("charisma")).grid(row=0, column=3, padx=5)
+
+# --- Idle Thought Update ---
+def idle_update():
+    message_label.config(text=dragon.get_idle_thought())
+    window.after(random.randint(15000,150000), idle_update)
+
+idle_update()
 
 # --- Start App ---
 window.mainloop()
