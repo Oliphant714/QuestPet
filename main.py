@@ -16,6 +16,8 @@ class Dragon:
         self.level = 1
         self.xp = 0
         self.xp_to_next_level = 100
+
+        #Personality
         self.personality = "neutral"
         self.role_bias = "mentor"
         
@@ -121,61 +123,6 @@ class Dragon:
         else:
             return self.role_bias
 
-    def get_reaction(self, context):
-        personality = self.personality
-        reactions = {
-            "neutral": {
-                "task_complete": "I feel... stronger.  Thank you for helping me grow.",
-                "no_points": "I'm not ready yet... but I will be.",
-                "stat_up": "Something inside me is changing..."
-            },
-            "strength": {
-                "task_complete": "Another victory! Your discipline fuels my power!",
-                "no_points": "We are not ready yet. Train harder!",
-                "stat_up": "I feel my muscles surge with strength!"
-            },
-            "dexterity": {
-                "task_complete": "Quick and clean! Just how I like it!",
-                "no_points": "Hehe… we’ll get there soon!",
-                "stat_up": "Ooo, I feel lighter already!"
-            },
-            "intelligence": {
-                "task_complete": "Excellent work. Knowledge is our true weapon.",
-                "no_points": "Patience. Growth requires preparation.",
-                "stat_up": "My thoughts feel… clearer."
-            },
-            "charisma": {
-                "task_complete": "I’m so proud of you! That was amazing!",
-                "no_points": "It’s okay, we’ll grow together!",
-                "stat_up": "Ooo~ I can feel my presence growing!"
-            }
-        }
-        return reactions[personality].get(context, "")
-
-    def get_role_based_reaction(self, context):
-        role = self.get_role()
-
-        responses = {
-            "mentor": {
-                "task_complete": "Well done. Each step builds your future.",
-                "idle": "There is always something worth improving."
-            },
-            "companion": {
-                "task_complete": "Yesss! We did it together!",
-                "idle": "Hey… want to do something with me?"
-            },
-            "enforcer": {
-                "task_complete": "Good. Discipline is victory.",
-                "idle": "We should be training."
-            },
-            "playful": {
-                "task_complete": "Hehe! That was easy!",
-                "idle": "Ooo~ I’m bored. Let’s do something!"
-            }
-        }
-
-        return responses.get(role, {}).get(context, "")
-
     def spend_growth_point(self, stat):
         if self.growthpoints <= 0:
             return False
@@ -264,13 +211,35 @@ class Dragon:
                 "task_complete": "Objective complete.",
                 "stat_up": "Power increased."
             },
-            "layful": {
+            "playful": {
                 "task_complete": "Yay! That was fun!",
                 "stat_up": "Woohoo! I feel awesome!"
             }
         }
 
         return responses.get(role, {}).get(context, "")
+
+class UserState:
+    def __init__(self):
+        self.tasks_completed = 0
+        self.tasks_skipped = 0
+        self.consecutive_skips = 0
+        self.last_action = None
+
+    def record_task_complete(self):
+        self.tasks_completed += 1
+        self.consecutive_skips = 0
+        self.idle_cycles = 0
+        self.last_action = "task_complete"
+
+    def record_skip(self):
+        self.tasks_skipped += 1
+        self.consecutive_skips += 1
+        self.last_action = "skip"
+
+    def record_idle(self):
+        self.idle_cycles += 1
+        self.last_action = "idle"
 
 # --- Task Lists ---
 active_tasks = [
@@ -281,11 +250,7 @@ active_tasks = [
 completed_tasks = []
 
 # --- User State ---
-user_state = {
-    "tasks_skipped": 0,
-    "idle_cycles": 0,
-    "last_action": None
-}
+user_state = UserState()
 
 # --- Create Dragon ---
 dragon = Dragon("Ember")
