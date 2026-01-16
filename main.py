@@ -241,6 +241,15 @@ class UserState:
         self.idle_cycles += 1
         self.last_action = "idle"
 
+    def get_emotional_state(self):
+        if self.consecutive_skips >= 3:
+            return "overwhelmed"
+        elif self.idle_cycles >= 3:
+            return "disengaged"
+        elif self.tasks_completed >= 5:
+            return "motivated"
+        return "neutral"
+
 # --- Task Lists ---
 active_tasks = [
     Task("Math Homework", 100),
@@ -304,9 +313,7 @@ def complete_task():
     task.mark_complete()
     dragon.gain_xp(task.xp_reward)
 
-    user_state["tasks_skipped"] = 0
-    user_state["idle_cycles"] = 0
-    user_state["last_action"] = "task_complete"
+    user_state.record_task_complete()
 
     active_tasks.remove(task)
     completed_tasks.append(task)
@@ -340,7 +347,9 @@ tk.Button(stat_frame, text="Increase CHA", command=lambda: increase_stat("charis
 
 # --- Idle Thought Update ---
 def idle_update():
-    message_label.config(text=dragon.get_idle_thought())
+    user_state.record_idle()
+    message = dragon.react("idle", user_state)
+    message_label.config(text=message)
     window.after(random.randint(15000,150000), idle_update)
 
 idle_update()
