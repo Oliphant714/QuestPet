@@ -145,7 +145,7 @@ class Dragon:
         self.update_personality()
         return True
 
-    def get_idle_thought(self):
+    def get_ambient_thought(self):
         thoughts = {
             "strength": [
                 "We should train again soon. Discipline builds power.",
@@ -233,6 +233,7 @@ class UserState:
     def record_task_complete(self):
         self.tasks_completed += 1
         self.consecutive_skips = 0
+        self.idle_cycles = 0
         self.last_action = "task_complete"
 
     def record_skip(self):
@@ -340,6 +341,9 @@ stat_frame.pack(pady=10)
 def increase_stat(stat_name):
     success = dragon.spend_growth_point(stat_name)
     if success:
+        user_state.idle_cycles = 0
+        user_state.last_action = "stat_up"
+
         status_label.config(text=dragon.get_status_text())
         message_label.config(text=dragon.react("stat_up", user_state))
     else:
@@ -355,8 +359,10 @@ tk.Button(stat_frame, text="Increase CHA", command=lambda: increase_stat("charis
 def idle_update():
     user_state.record_idle()
     message = dragon.react("idle", user_state)
+    if not message:
+        message = dragon.get_ambient_thought()
     message_label.config(text=message)
-    window.after(random.randint(15000,150000), idle_update)
+    window.after(random.randint(15000,20000), idle_update)
 
 idle_update()
 
