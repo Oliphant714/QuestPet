@@ -32,8 +32,11 @@ class Dragon:
     def gain_xp(self, amount):
         self.xp += amount
 
+        #Make the Dragon Level Up
         if self.xp >= self.xp_to_next_level:
             self.level_up()
+            return "level_up"
+        return None
 
     def level_up(self):
         self.level += 1
@@ -60,15 +63,14 @@ class Dragon:
 
     def react(self, context, user_state):
         role = self.get_role()
-        personality = self.personality
 
-        if user_state["idle_cycles"] >= 3:
+        if user_state.idle_cycles >= 3:
             return self.get_callout_line(role, "idle")
-        
-        if user_state["tasks_skipped"] >= 2:
+
+        if user_state.tasks_skipped >= 2:
             return self.get_callout_line(role, "avoidance")
         
-        return self.get_standard_line(role, context, personality)
+        return self.get_standard_line(role, context)
 
     def get_status_text(self):
         return (
@@ -201,7 +203,8 @@ class Dragon:
         responses = {
             "mentor": {
                 "task_complete": "Good. Progress is earned.",
-                "stat_up": "Growth acknowledged."
+                "stat_up": "Growth acknowledged.",
+                "no_points": "We need more experience."
             },
             "companion": {
                 "task_complete": "We did it!! I’m proud of you!",
@@ -217,7 +220,7 @@ class Dragon:
             }
         }
 
-        return responses.get(role, {}).get(context, "")
+        return responses.get(role, {}).get(context, "") or "..."
 
 class UserState:
     def __init__(self):
@@ -225,11 +228,11 @@ class UserState:
         self.tasks_skipped = 0
         self.consecutive_skips = 0
         self.last_action = None
+        self.idle_cycles = 0
 
     def record_task_complete(self):
         self.tasks_completed += 1
         self.consecutive_skips = 0
-        self.idle_cycles = 0
         self.last_action = "task_complete"
 
     def record_skip(self):
@@ -311,7 +314,7 @@ def complete_task():
     task = active_tasks[index]
 
     task.mark_complete()
-    dragon.gain_xp(task.xp_reward)
+    reaction_context = dragon.gain_xp(task.xp_reward)
 
     user_state.record_task_complete()
 
@@ -322,7 +325,10 @@ def complete_task():
     refresh_completed_tasks()
 
     status_label.config(text=dragon.get_status_text())
-    message_label.config(text=dragon.get_reaction("task_complete"))
+    if reaction_context:
+        message = dragon.react(reaction_context, user_state)
+    else:
+        message = dragon.react("task_complete", user_state)
 
 # --- Complete Task Button ---
 xp_button = tk.Button(window, text="Complete Task", command=complete_task)
@@ -335,9 +341,9 @@ def increase_stat(stat_name):
     success = dragon.spend_growth_point(stat_name)
     if success:
         status_label.config(text=dragon.get_status_text())
-        message_label.config(text=dragon.get_reaction("stat_up"))
+        message_label.config(text=dragon.react("stat_up", user_state))
     else:
-        message_label.config(text=dragon.get_reaction("no_points"))
+        message_label.config(text=dragon.react("no_points", user_state))
 
 # --- Stat Buttons ---
 tk.Button(stat_frame, text="Increase STR", command=lambda: increase_stat("strength")).grid(row=0, column=0, padx=5)
