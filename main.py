@@ -43,6 +43,9 @@ class Dragon:
         
         self.xp = self.xp - self.xp_to_next_level
         self.xp_to_next_level = int(self.xp_to_next_level * 1.5)
+        if self.xp >= self.xp_to_next_level:
+            self.level_up()  # Handle multiple level-ups
+
         self.award_growth_points()
         self.update_stage()
 
@@ -258,7 +261,16 @@ class UserState:
 active_tasks = [
     Task("Math Homework", 100),
     Task("English Essay", 200),
-    Task("Study Biology", 400)
+    Task("Study Biology", 400),
+    Task("Clean Room", 50),
+    Task("Grocery Shopping", 75),
+    Task("Exercise for 30 minutes", 150),
+    Task("Read a Chapter of a Book", 120),
+    Task("Practice a Hobby", 180),
+    Task("Meditate for 10 minutes", 80),
+    Task("Plan the Week Ahead", 130),
+    Task("Organize Desk", 90),
+    Task("Call a Friend or Family Member", 110)
 ]
 completed_tasks = []
 
@@ -330,6 +342,8 @@ def complete_task():
         message = dragon.react(reaction_context, user_state)
     else:
         message = dragon.react("task_complete", user_state)
+    
+    return message_label.config(text=message)
 
 # --- Complete Task Button ---
 xp_button = tk.Button(window, text="Complete Task", command=complete_task)
