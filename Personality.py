@@ -10,46 +10,46 @@ class Task:
     def mark_complete(self):
         self.completed = True
 
-    # --- Initial Task Display ---
-    def refresh_active_tasks():
-        active_listbox.delete(0, tk.END)
-        for task in active_tasks:
-            active_listbox.insert(tk.END, task.description)
+    # # --- Initial Task Display ---
+    # def refresh_active_tasks():
+    #     active_listbox.delete(0, tk.END)
+    #     for task in active_tasks:
+    #         active_listbox.insert(tk.END, task.description)
 
-    # --- Refresh Completed Tasks ---
-    def refresh_completed_tasks():
-        completed_listbox.delete(0, tk.END)
-        for task in completed_tasks:
-            completed_listbox.insert(tk.END, task.description)
+    # # --- Refresh Completed Tasks ---
+    # def refresh_completed_tasks():
+    #     completed_listbox.delete(0, tk.END)
+    #     for task in completed_tasks:
+    #         completed_listbox.insert(tk.END, task.description)
 
-    # --- Complete Task Button Action ---
-    def complete_task():
-        selection = active_listbox.curselection()
-        if not selection:
-            message_label.config(text="No task selected!")
-            return
+    # # --- Complete Task Button Action ---
+    # def complete_task():
+    #     selection = active_listbox.curselection()
+    #     if not selection:
+    #         message_label.config(text="No task selected!")
+    #         return
 
-        index = selection[0]
-        task = active_tasks[index]
+    #     index = selection[0]
+    #     task = active_tasks[index]
 
-        task.mark_complete()
-        reaction_context = dragon.gain_xp(task.xp_reward)
+    #     task.mark_complete()
+    #     reaction_context = dragon.gain_xp(task.xp_reward)
 
-        user_state.record_task_complete()
+    #     user_state.record_task_complete()
 
-        active_tasks.remove(task)
-        completed_tasks.append(task)
+    #     active_tasks.remove(task)
+    #     completed_tasks.append(task)
 
-        task.refresh_active_tasks()
-        task.refresh_completed_tasks()
+    #     task.refresh_active_tasks()
+    #     task.refresh_completed_tasks()
 
-        status_label.config(text=dragon.get_status_text())
-        if reaction_context:
-            message = dragon.react(reaction_context, user_state)
-        else:
-            message = dragon.react("task_complete", user_state)
+    #     status_label.config(text=dragon.get_status_text())
+    #     if reaction_context:
+    #         message = dragon.react(reaction_context, user_state)
+    #     else:
+    #         message = dragon.react("task_complete", user_state)
         
-        return message_label.config(text=message)
+    #     return message_label.config(text=message)
 
 class Dragon:
     def __init__(self, name):
@@ -97,16 +97,16 @@ class Dragon:
         elif self.level == 7:
             self.growthpoints += 4
 
-    def increase_stat(stat_name):
-        success = dragon.spend_growth_point(stat_name)
-        if success:
-            user_state.idle_cycles = 0
-            user_state.last_action = "stat_up"
+    # def increase_stat(stat_name):
+    #     success = dragon.spend_growth_point(stat_name)
+    #     if success:
+    #         user_state.idle_cycles = 0
+    #         user_state.last_action = "stat_up"
 
-            status_label.config(text=dragon.get_status_text())
-            message_label.config(text=dragon.react("stat_up", user_state))
-        else:
-            message_label.config(text=dragon.react("no_points", user_state))
+    #         status_label.config(text=dragon.get_status_text())
+    #         message_label.config(text=dragon.react("stat_up", user_state))
+    #     else:
+    #         message_label.config(text=dragon.react("no_points", user_state))
 
     def update_stage(self):
         if self.level >= 7:
@@ -310,11 +310,11 @@ class UserState:
         return "neutral"
 
     # --- Idle Thought Update ---
-    def idle_update():
-        UserState.record_idle()
-        message = Dragon.react("idle", UserState)
-        if not message:
-            message = Dragon.get_ambient_thought()
-        message_label.config(text=message)
-        window.after(random.randint(15000,20000), UserState.idle_update)
+    # def idle_update():
+    #     UserState.record_idle()
+    #     message = Dragon.react("idle", UserState)
+    #     if not message:
+    #         message = Dragon.get_ambient_thought()
+    #     message_label.config(text=message)
+    #     window.after(random.randint(15000,20000), UserState.idle_update)
 
