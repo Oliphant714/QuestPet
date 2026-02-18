@@ -27,11 +27,25 @@ win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(255,0,255), 0, win32con.L
 
 clock = pygame.time.Clock()
 
-idle_frames = []
+def load_animation(folder_path):
+    frames = []
+    for file in sorted(os.listdir(folder_path)):
+        if file.endswith('.png'):
+             frames.append(pygame.image.load(os.path.join(folder_path, file)).convert_alpha())
+    return frames
 
-for i in range(0, 3):
-    idle_frame = pygame.image.load(f"visuals/assets/idle/i_blob_{i}.png").convert_alpha()
-    idle_frames.append(idle_frame)
+animations = {
+    "idle": load_animation("visuals/assets/idle"),
+    "sleeping": load_animation("visuals/assets/sleeping"),
+    "idle_to_sleeping": load_animation("visuals/assets/idle_to_sleeping"),
+    "sleeping_to_idle": load_animation("visuals/assets/sleeping_to_idle"),
+    "walking_left": load_animation("visuals/assets/walking_left"),
+    "walking_right": load_animation("visuals/assets/walking_right"),
+}
+
+current_animation = "idle"
+
+
 
 frame_index = 0
 
@@ -48,15 +62,13 @@ while running:
     #Clear the screen
     screen.fill((255, 0, 255))  # Use magenta as the transparent color
 
-    #Draw the idle animation
-    screen.blit(idle_frames[frame_index], (1, 1))
+    #Draw the current animation
+    screen.blit(animations[current_animation][frame_index], (0, 0))
 
     #Advance animation
-    frame_index += 1
-    if frame_index >= len(idle_frames):
-        frame_index = 0
+    frame_index = (frame_index + 1) % len(animations[current_animation])
 
-    pygame.display.update()
+    pygame.display.flip()
     clock.tick(5)
 
 pygame.quit()
