@@ -43,10 +43,8 @@ animations = {
     "walking_right": load_animation("visuals/assets/walking_right"),
 }
 
+current_state = "idle"
 current_animation = "idle"
-
-
-
 frame_index = 0
 
 running = True
@@ -58,7 +56,41 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
-    
+        #State changes by buttons
+        elif event.type == pygame.KEYDOWN:
+            if current_state != "sleeping":
+                if event.key == pygame.K_a:
+                    current_state = "walking_left"
+                    #x -= 5
+                    frame_index = 0
+                elif event.key == pygame.K_d:
+                    current_state = "walking_right"
+                    #x += 5
+                    frame_index = 0
+                elif event.key == pygame.K_s:
+                    current_state = "idle_to_sleeping"
+                    frame_index = 0   
+                elif event.key == pygame.K_w:
+                    current_state = "sleeping_to_idle"
+                    frame_index = 0
+        elif event.type == pygame.KEYUP:
+            if event.key in [pygame.K_a, pygame.K_d]:
+                current_state = "idle"
+                frame_index = 0
+
+    if current_state == "idle":
+        current_animation = "idle"
+    elif current_state == "sleeping":
+        current_animation = "sleeping"
+    elif current_state == "idle_to_sleeping":
+        current_animation = "idle_to_sleeping"
+    elif current_state == "sleeping_to_idle":
+        current_animation = "sleeping_to_idle"
+    elif current_state == "walking_left":
+        current_animation = "walking_left"
+    elif current_state == "walking_right":
+        current_animation = "walking_right"
+
     #Clear the screen
     screen.fill((255, 0, 255))  # Use magenta as the transparent color
 
@@ -67,6 +99,13 @@ while running:
 
     #Advance animation
     frame_index = (frame_index + 1) % len(animations[current_animation])
+
+    if frame_index >= len(animations[current_animation]):
+        frame_index = 0
+        if current_state == "idle_to_sleeping":
+            current_state = "sleeping"
+        elif current_state == "sleeping_to_idle":
+            current_state = "idle"
 
     pygame.display.flip()
     clock.tick(5)
