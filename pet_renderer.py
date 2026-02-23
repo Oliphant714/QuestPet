@@ -100,7 +100,7 @@ while running:
     #Advance animation
     frame_index = (frame_index + 1) % len(animations[current_animation])
 
-    if frame_index >= len(animations[current_animation]):
+    if frame_index >= len(animations[current_animation])-1:
         frame_index = 0
         if current_state == "idle_to_sleeping":
             current_state = "sleeping"
