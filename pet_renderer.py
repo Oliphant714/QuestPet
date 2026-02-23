@@ -70,7 +70,8 @@ while running:
                 elif event.key == pygame.K_s:
                     current_state = "idle_to_sleeping"
                     frame_index = 0   
-                elif event.key == pygame.K_w:
+            elif current_state == "sleeping":    
+                if event.key == pygame.K_w:
                     current_state = "sleeping_to_idle"
                     frame_index = 0
         elif event.type == pygame.KEYUP:
