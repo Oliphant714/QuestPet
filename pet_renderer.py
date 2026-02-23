@@ -1,3 +1,4 @@
+from turtle import speed
 import pygame
 import sys
 import os
@@ -16,7 +17,9 @@ pygame.display.set_caption("QuestPet")
 
 #Set the window to be always on top
 hwnd = pygame.display.get_wm_info()['window']
-win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+x, y = 600, 958
+speed = 10
+win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
 
 #Make the window transparent
 win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
@@ -61,11 +64,11 @@ while running:
             if current_state != "sleeping":
                 if event.key == pygame.K_a:
                     current_state = "walking_left"
-                    #x -= 5
+                    # x -= speed
                     frame_index = 0
                 elif event.key == pygame.K_d:
                     current_state = "walking_right"
-                    #x += 5
+                    # x += speed
                     frame_index = 0
                 elif event.key == pygame.K_s:
                     current_state = "idle_to_sleeping"
@@ -75,9 +78,10 @@ while running:
                     current_state = "sleeping_to_idle"
                     frame_index = 0
         elif event.type == pygame.KEYUP:
-            if event.key in [pygame.K_a, pygame.K_d]:
-                current_state = "idle"
-                frame_index = 0
+            if current_state != "sleeping":
+                if event.key in [pygame.K_a, pygame.K_d]:
+                    current_state = "idle"
+                    frame_index = 0
 
     if current_state == "idle":
         current_animation = "idle"
@@ -107,6 +111,13 @@ while running:
             current_state = "sleeping"
         elif current_state == "sleeping_to_idle":
             current_state = "idle"
+        elif current_state == "walking_left":
+            x -= speed
+        elif current_state == "walking_right":
+            x += speed
+
+    # Update window position
+    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
 
     pygame.display.flip()
     clock.tick(5)
