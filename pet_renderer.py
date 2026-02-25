@@ -117,7 +117,7 @@ while running:
             x += speed
 
     # Update window position
-    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
+    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE)
 
     pygame.display.flip()
     clock.tick(5)
