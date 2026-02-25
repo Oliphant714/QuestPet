@@ -64,11 +64,9 @@ while running:
             if current_state != "sleeping":
                 if event.key == pygame.K_a:
                     current_state = "walking_left"
-                    # x -= speed
                     frame_index = 0
                 elif event.key == pygame.K_d:
                     current_state = "walking_right"
-                    # x += speed
                     frame_index = 0
                 elif event.key == pygame.K_s:
                     current_state = "idle_to_sleeping"
@@ -106,10 +104,10 @@ while running:
     frame_index = (frame_index + 1) % len(animations[current_animation])
 
     if frame_index >= len(animations[current_animation])-1:
-        frame_index = 0
         if current_state == "idle_to_sleeping":
             current_state = "sleeping"
         elif current_state == "sleeping_to_idle":
+            frame_index = 0
             current_state = "idle"
         elif current_state == "walking_left":
             x -= speed
