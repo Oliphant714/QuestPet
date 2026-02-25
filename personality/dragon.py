@@ -1,3 +1,6 @@
+import random
+from user_state import UserState
+
 class Dragon:
     def __init__(self, name):
         self.name = name
