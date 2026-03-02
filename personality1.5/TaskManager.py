@@ -37,7 +37,8 @@ class TaskManager:
             elif hours_left < 72:
                 urgency_bonus = 5
 
-        streak_bonus = self.streak * 2
+        streak_modifier = self.streak // 7
+        streak_bonus = streak_modifier * 5
 
         return base + urgency_bonus + streak_bonus
 
