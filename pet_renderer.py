@@ -26,7 +26,7 @@ win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, win32gui.GetWindowLong(hwnd, 
 #Set the color key to magenta (255, 0, 255) and make it fully transparent
 win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(255,0,255), 0, win32con.LWA_COLORKEY)
 
-
+pet_type = "blob"
 
 clock = pygame.time.Clock()
 
@@ -38,12 +38,12 @@ def load_animation(folder_path):
     return frames
 
 animations = {
-    "idle": load_animation("visuals/assets/idle"),
-    "sleeping": load_animation("visuals/assets/sleeping"),
-    "idle_to_sleeping": load_animation("visuals/assets/idle_to_sleeping"),
-    "sleeping_to_idle": load_animation("visuals/assets/sleeping_to_idle"),
-    "walking_left": load_animation("visuals/assets/walking_left"),
-    "walking_right": load_animation("visuals/assets/walking_right"),
+    "idle": load_animation(f"visuals/assets/{pet_type}/idle"),
+    "sleeping": load_animation(f"visuals/assets/{pet_type}/sleeping"),
+    "idle_to_sleeping": load_animation(f"visuals/assets/{pet_type}/idle_to_sleeping"),
+    "sleeping_to_idle": load_animation(f"visuals/assets/{pet_type}/sleeping_to_idle"),
+    "walking_left": load_animation(f"visuals/assets/{pet_type}/walking_left"),
+    "walking_right": load_animation(f"visuals/assets/{pet_type}/walking_right"),
 }
 
 current_state = "idle"
