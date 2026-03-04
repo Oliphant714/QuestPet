@@ -27,16 +27,18 @@ class PetRenderer:
 
         self.clock = pygame.time.Clock()
 
+        species = "blob"  # This can be made dynamic later
+        self.species = species
         # Load animations
         self.animations = {
-            "idle": self.load_animation("visuals/assets/idle"),
-            "sleeping": self.load_animation("visuals/assets/sleeping"),
-            "idle_to_sleeping": self.load_animation("visuals/assets/idle_to_sleeping"),
-            "sleeping_to_idle": self.load_animation("visuals/assets/sleeping_to_idle"),
-            "walking_left": self.load_animation("visuals/assets/walking_left"),
-            "walking_right": self.load_animation("visuals/assets/walking_right"),
-            "happy": self.load_animation("visuals/assets/happy"),  # add new animations easily
-            "level_up": self.load_animation("visuals/assets/level_up")
+            "idle": self.load_animation(f"visuals/assets/{self.species}/idle"),
+            "sleeping": self.load_animation(f"visuals/assets/{self.species}/sleeping"),
+            "idle_to_sleeping": self.load_animation(f"visuals/assets/{self.species}/idle_to_sleeping"),
+            "sleeping_to_idle": self.load_animation(f"visuals/assets/{self.species}/sleeping_to_idle"),
+            "walking_left": self.load_animation(f"visuals/assets/{self.species}/walking_left"),
+            "walking_right": self.load_animation(f"visuals/assets/{self.species}/walking_right")#,
+            # "happy": self.load_animation(f"visuals/assets/{self.species}/happy"),  # add new animations easily
+            # "level_up": self.load_animation(f"visuals/assets/{self.species}/level_up")
         }
 
         self.current_state = "idle"
