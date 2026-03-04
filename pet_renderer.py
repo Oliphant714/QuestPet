@@ -1,124 +1,124 @@
-from turtle import speed
-import pygame
-import sys
-import os
-import win32gui
-import win32con
-import win32api
+# from turtle import speed
+# import pygame
+# import sys
+# import os
+# import win32gui
+# import win32con
+# import win32api
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = '600,958'
+# os.environ['SDL_VIDEO_WINDOW_POS'] = '600,958'
 
-pygame.init()
+# pygame.init()
 
-#Window settings
-WIDTH, HEIGHT = 64, 64
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.NOFRAME)
-pygame.display.set_caption("QuestPet")
+# #Window settings
+# WIDTH, HEIGHT = 64, 64
+# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.NOFRAME)
+# pygame.display.set_caption("QuestPet")
 
-#Set the window to be always on top
-hwnd = pygame.display.get_wm_info()['window']
-x, y = 600, 958
-speed = 10
-win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
+# #Set the window to be always on top
+# hwnd = pygame.display.get_wm_info()['window']
+# x, y = 600, 958
+# speed = 10
+# win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
 
-#Make the window transparent
-win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
-#Set the color key to magenta (255, 0, 255) and make it fully transparent
-win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(255,0,255), 0, win32con.LWA_COLORKEY)
+# #Make the window transparent
+# win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
+# #Set the color key to magenta (255, 0, 255) and make it fully transparent
+# win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(255,0,255), 0, win32con.LWA_COLORKEY)
 
-pet_type = "blob"
+# pet_type = "blob"
 
-clock = pygame.time.Clock()
+# clock = pygame.time.Clock()
 
-def load_animation(folder_path):
-    frames = []
-    for file in sorted(os.listdir(folder_path)):
-        if file.endswith('.png'):
-             frames.append(pygame.image.load(os.path.join(folder_path, file)).convert_alpha())
-    return frames
+# def load_animation(folder_path):
+#     frames = []
+#     for file in sorted(os.listdir(folder_path)):
+#         if file.endswith('.png'):
+#              frames.append(pygame.image.load(os.path.join(folder_path, file)).convert_alpha())
+#     return frames
 
-animations = {
-    "idle": load_animation(f"visuals/assets/{pet_type}/idle"),
-    "sleeping": load_animation(f"visuals/assets/{pet_type}/sleeping"),
-    "idle_to_sleeping": load_animation(f"visuals/assets/{pet_type}/idle_to_sleeping"),
-    "sleeping_to_idle": load_animation(f"visuals/assets/{pet_type}/sleeping_to_idle"),
-    "walking_left": load_animation(f"visuals/assets/{pet_type}/walking_left"),
-    "walking_right": load_animation(f"visuals/assets/{pet_type}/walking_right"),
-}
+# animations = {
+#     "idle": load_animation(f"visuals/assets/{pet_type}/idle"),
+#     "sleeping": load_animation(f"visuals/assets/{pet_type}/sleeping"),
+#     "idle_to_sleeping": load_animation(f"visuals/assets/{pet_type}/idle_to_sleeping"),
+#     "sleeping_to_idle": load_animation(f"visuals/assets/{pet_type}/sleeping_to_idle"),
+#     "walking_left": load_animation(f"visuals/assets/{pet_type}/walking_left"),
+#     "walking_right": load_animation(f"visuals/assets/{pet_type}/walking_right"),
+# }
 
-current_state = "idle"
-current_animation = "idle"
-frame_index = 0
+# current_state = "idle"
+# current_animation = "idle"
+# frame_index = 0
 
-running = True
-while running:
-    for event in pygame.event.get():
+# running = True
+# while running:
+#     for event in pygame.event.get():
 
-        #Windows close button
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                running = False
-        #State changes by buttons
-        elif event.type == pygame.KEYDOWN:
-            if current_state != "sleeping":
-                if event.key == pygame.K_a:
-                    current_state = "walking_left"
-                    frame_index = 0
-                elif event.key == pygame.K_d:
-                    current_state = "walking_right"
-                    frame_index = 0
-                elif event.key == pygame.K_s:
-                    current_state = "idle_to_sleeping"
-                    frame_index = 0   
-            elif current_state == "sleeping":    
-                if event.key == pygame.K_w:
-                    current_state = "sleeping_to_idle"
-                    frame_index = 0
-        elif event.type == pygame.KEYUP:
-            if current_state != "sleeping":
-                if event.key in [pygame.K_a, pygame.K_d]:
-                    current_state = "idle"
-                    frame_index = 0
+#         #Windows close button
+#         if event.type == pygame.QUIT:
+#             running = False
+#         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+#                 running = False
+#         #State changes by buttons
+#         elif event.type == pygame.KEYDOWN:
+#             if current_state != "sleeping":
+#                 if event.key == pygame.K_a:
+#                     current_state = "walking_left"
+#                     frame_index = 0
+#                 elif event.key == pygame.K_d:
+#                     current_state = "walking_right"
+#                     frame_index = 0
+#                 elif event.key == pygame.K_s:
+#                     current_state = "idle_to_sleeping"
+#                     frame_index = 0   
+#             elif current_state == "sleeping":    
+#                 if event.key == pygame.K_w:
+#                     current_state = "sleeping_to_idle"
+#                     frame_index = 0
+#         elif event.type == pygame.KEYUP:
+#             if current_state != "sleeping":
+#                 if event.key in [pygame.K_a, pygame.K_d]:
+#                     current_state = "idle"
+#                     frame_index = 0
 
-    if current_state == "idle":
-        current_animation = "idle"
-    elif current_state == "sleeping":
-        current_animation = "sleeping"
-    elif current_state == "idle_to_sleeping":
-        current_animation = "idle_to_sleeping"
-    elif current_state == "sleeping_to_idle":
-        current_animation = "sleeping_to_idle"
-    elif current_state == "walking_left":
-        current_animation = "walking_left"
-    elif current_state == "walking_right":
-        current_animation = "walking_right"
+#     if current_state == "idle":
+#         current_animation = "idle"
+#     elif current_state == "sleeping":
+#         current_animation = "sleeping"
+#     elif current_state == "idle_to_sleeping":
+#         current_animation = "idle_to_sleeping"
+#     elif current_state == "sleeping_to_idle":
+#         current_animation = "sleeping_to_idle"
+#     elif current_state == "walking_left":
+#         current_animation = "walking_left"
+#     elif current_state == "walking_right":
+#         current_animation = "walking_right"
 
-    #Clear the screen
-    screen.fill((255, 0, 255))  # Use magenta as the transparent color
+#     #Clear the screen
+#     screen.fill((255, 0, 255))  # Use magenta as the transparent color
 
-    #Draw the current animation
-    screen.blit(animations[current_animation][frame_index], (0, 0))
+#     #Draw the current animation
+#     screen.blit(animations[current_animation][frame_index], (0, 0))
 
-    #Advance animation
-    frame_index = (frame_index + 1) % len(animations[current_animation])
+#     #Advance animation
+#     frame_index = (frame_index + 1) % len(animations[current_animation])
 
-    if frame_index >= len(animations[current_animation])-1:
-        if current_state == "idle_to_sleeping":
-            current_state = "sleeping"
-        elif current_state == "sleeping_to_idle":
-            frame_index = 0
-            current_state = "idle"
-        elif current_state == "walking_left":
-            x -= speed
-        elif current_state == "walking_right":
-            x += speed
+#     if frame_index >= len(animations[current_animation])-1:
+#         if current_state == "idle_to_sleeping":
+#             current_state = "sleeping"
+#         elif current_state == "sleeping_to_idle":
+#             frame_index = 0
+#             current_state = "idle"
+#         elif current_state == "walking_left":
+#             x -= speed
+#         elif current_state == "walking_right":
+#             x += speed
 
-    # Update window position
-    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE)
+#     # Update window position
+#     win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, int(x), int(y), 0, 0, win32con.SWP_NOSIZE)
 
-    pygame.display.flip()
-    clock.tick(5)
-
-pygame.quit()
-sys.exit()
+#     pygame.display.flip()
+#     clock.tick(5)
+#
+# pygame.quit()
+# sys.exit()
