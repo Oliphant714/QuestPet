@@ -12,6 +12,8 @@ def main():
     pet_renderer = PetRenderer()
     pet_animation = PetAnimation(pet_renderer)
 
+    pet_renderer.species = "blob"  # Set the species for loading animations
+
     # Example usage
     pet_animation.idle()  # Start with idle animation
 
