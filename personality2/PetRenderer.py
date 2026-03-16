@@ -42,6 +42,7 @@ class PetRenderer:
         }
 
         self.current_state = "idle"
+        self.current_animation = "idle"
         self.frame_index = 0
 
     def load_animation(self, folder_path):
