@@ -42,7 +42,6 @@ class PetRenderer:
         }
 
         self.current_state = "idle"
-        self.current_animation = "idle"
         self.frame_index = 0
 
     def load_animation(self, folder_path):
@@ -61,11 +60,23 @@ class PetRenderer:
         frames = self.animations[self.current_state]
         self.frame_index = (self.frame_index + 1) % len(frames)
 
-        # Movement logic
-        if self.current_state == "walking_left":
+        if self.frame_index >= len(self.animations[self.current_state]) - 1:
+            if self.current_state == "idle_to_sleeping":
+                self.current_state = "sleeping"
+            elif self.current_state == "sleeping_to_idle":
+                self.frame_index = 0
+                self.current_state = "idle"
+        elif self.current_state == "walking_left":
             self.x -= self.speed
         elif self.current_state == "walking_right":
             self.x += self.speed
+
+        # # Movement logic
+        # if self.current_state == "walking_left":
+        #     self.x -= self.speed
+        # elif self.current_state == "walking_right":
+        #     self.x += self.speed
+        
 
         win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, int(self.x), int(self.y), 0, 0,
                               win32con.SWP_NOSIZE)
@@ -77,12 +88,37 @@ class PetRenderer:
         pygame.display.flip()
         self.clock.tick(5)
 
+
+    def handle_event(self, event):
+        if event.type == pygame.QUIT:
+            return False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return False
+        elif event.type == pygame.KEYDOWN:
+            if self.current_state != "sleeping":
+                if event.key == pygame.K_a:
+                    self.set_state("walking_left")
+                elif event.key == pygame.K_d:
+                    self.set_state("walking_right")
+                elif event.key == pygame.K_s:
+                    self.set_state("idle_to_sleeping")
+            elif self.current_state == "sleeping":
+                if event.key == pygame.K_w:
+                    self.set_state("sleeping_to_idle")
+        elif event.type == pygame.KEYUP:
+            if self.current_state != "sleeping":
+                if event.key in [pygame.K_a, pygame.K_d]:
+                    self.set_state("idle")
+                    self.frame_index = 0
+        return True
+
     def run(self):
         running = True
         while running:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if not self.handle_event(event):
                     running = False
+                    break
 
             self.update()
             self.draw()
