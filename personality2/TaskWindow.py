@@ -17,24 +17,26 @@ class TaskWindow:
         self.window = tk.Tk()
         self.window.title("Tasks")
         self.window.geometry("400x300")
-        self.window.mainloop()
 
         label = tk.Label(self.window, text="Your Tasks")
         label.pack(pady=20)
 
+        close_button = tk.Button(self.window, text="Close", command=self.close)
+        close_button.pack(pady=10)
+
+        self.active_listbox = tk.Listbox(self.window)
+        self.active_listbox.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+
         self.window.mainloop()
 
-    #     self.create_window()
+    def refresh(self):
+        self.active_listbox.delete(0, tk.END)
+        for task in self.task_manager.active_tasks:
+            self.active_listbox.insert(tk.END, f"{task.id}: {task.title} - {task.difficulty}")
 
-    # def create_window(self):
-    #     self.screen = pygame.display.set_mode((400, 300))
-    #     pygame.display.set_caption("Tasks")
+    def close(self):
+        if self.window:
+            self.window.destroy()
+            self.window = None
 
-    # def draw(self):
-    #     self.screen.fill((50, 50, 50))
-    #     pygame.display.flip()
     
-    # def recreate_window(self):
-    #     pygame.display.quit()
-    #     pygame.display.init()
-    #     self.create_window()

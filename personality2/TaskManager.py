@@ -2,15 +2,18 @@ from datetime import datetime
 
 class TaskManager:
     def __init__(self):
-        self.tasks = []
+        self.active_tasks = []
+        self.completed_tasks = []
         self.streak = 0
         self.last_completion_date = None
 
-    def add_task(self, task):
-        self.tasks.append(task)
+    def add_task(self, title, description, difficulty="medium", due=None, xp_reward=20):
+        task = Task(title, description, difficulty, due, xp_reward)
+        self.active_tasks.append(task)
+        return task
 
     def get_task(self, task_id):
-        for t in self.tasks:
+        for t in self.active_tasks:
             if t.id == task_id:
                 return t
         return None
@@ -21,6 +24,8 @@ class TaskManager:
             return None
 
         task.mark_complete()
+        self.active_tasks.remove(task)
+        self.completed_tasks.append(task)
         xp = self.calculate_xp(task)
         self.update_streak()
 

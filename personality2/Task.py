@@ -2,12 +2,16 @@ from uuid import uuid4
 from datetime import datetime
 
 class Task:
-    def __init__(self, title, source, difficulty="medium", due=None):
-        self.id = uuid4()
+    next_id = 1
+
+    def __init__(self, title, description, difficulty="medium", due=None, xp_reward=20):
+        self.id = Task.next_id
+        Task.next_id += 1
         self.title = title
-        self.source = source  # "canvas", "user", "pet"
+        self.description = description
         self.difficulty = difficulty
         self.due = due  # datetime or None
+        self.xp_reward = xp_reward  # XP reward for completing the task
         self.completed = False
         self.completed_at = None
 
