@@ -11,6 +11,9 @@ from personality2.PetAnimation import PetAnimation
 import personality2.TaskWindow as TaskWindow
 from personality2.TaskWindow import TaskWindow
 
+import personality2.Task as Task
+from personality2.Task import Task
+
 def main():
 
     renderer = PetRenderer()

@@ -1,4 +1,5 @@
 import tkinter as tk
+# from tkinter import *
 import threading
 
 class TaskWindow:
@@ -18,14 +19,25 @@ class TaskWindow:
         self.window.title("Tasks")
         self.window.geometry("400x300")
 
-        label = tk.Label(self.window, text="Your Tasks")
-        label.pack(pady=20)
+        self.window.protocol("WM_DELETE_WINDOW", self.close)
 
-        close_button = tk.Button(self.window, text="Close", command=self.close)
+        scroll_area = ScrollableFrame(self.window)
+        scroll_area.pack(fill=tk.BOTH, expand=True)
+
+        active_label = tk.Label(scroll_area.scrollable_frame, text="Your Tasks")
+        active_label.pack(pady=20)
+
+        active_listbox = tk.Listbox(scroll_area.scrollable_frame, width=50, height=10)
+        active_listbox.pack(pady=10)
+
+        completed_label = tk.Label(scroll_area.scrollable_frame, text="Completed Tasks")
+        completed_label.pack(pady=20)
+
+        completed_listbox = tk.Listbox(scroll_area.scrollable_frame, width=50, height=10)
+        completed_listbox.pack(pady=10)
+
+        close_button = tk.Button(scroll_area.scrollable_frame, text="Close", command=self.close)
         close_button.pack(pady=10)
-
-        self.active_listbox = tk.Listbox(self.window)
-        self.active_listbox.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
 
         self.window.mainloop()
 
@@ -38,5 +50,25 @@ class TaskWindow:
         if self.window:
             self.window.destroy()
             self.window = None
+            if hasattr(self, "pet_renderer"):
+                self.pet_renderer.bring.to_front()
 
-    
+class ScrollableFrame(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        canvas = tk.Canvas(self)
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.scrollable_frame = tk.Frame(canvas)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
