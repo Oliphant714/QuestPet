@@ -94,6 +94,8 @@ class PetRenderer:
             return False
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+            self.task_window.open()
         elif event.type == pygame.KEYDOWN:
             if self.current_state != "sleeping":
                 if event.key == pygame.K_a:
