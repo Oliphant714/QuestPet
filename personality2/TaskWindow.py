@@ -3,9 +3,11 @@ import tkinter as tk
 import threading
 
 class TaskWindow:
-    def __init__(self):
+    def __init__(self, task_manager):
         self.window = None
         self.pet_renderer = None
+        self.task_manager = task_manager
+
     def open(self):
         if self.window is not None:
             try:
@@ -29,6 +31,18 @@ class TaskWindow:
 
         active_label = tk.Label(scroll_area.scrollable_frame, text="Your Tasks")
         active_label.pack(pady=20)
+
+        add_task_button = tk.Button(scroll_area.scrollable_frame, text="Add Task", command=self.add_task)
+        add_task_button.pack(pady=10)
+
+        edit_task_button = tk.Button(scroll_area.scrollable_frame, text="Edit Task", command=self.edit_task)
+        edit_task_button.pack(pady=10)
+
+        delete_task_button = tk.Button(scroll_area.scrollable_frame, text="Delete Task", command=self.delete_task)
+        delete_task_button.pack(pady=10)
+
+        complete_task_button = tk.Button(scroll_area.scrollable_frame, text="Complete Task", command=self.complete_task)
+        complete_task_button.pack(pady=10)
 
         active_listbox = tk.Listbox(scroll_area.scrollable_frame, width=50, height=10)
         active_listbox.pack(pady=10)

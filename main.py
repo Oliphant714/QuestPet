@@ -20,7 +20,9 @@ from personality2.TaskManager import TaskManager
 def main():
 
     renderer = PetRenderer()
-    task_window = TaskWindow()
+    task_manager = TaskManager()
+    renderer.task_manager = task_manager
+    task_window = TaskWindow(task_manager)
     task_window.pet_renderer = renderer
     animation = PetAnimation(renderer)
     renderer.task_window = task_window
