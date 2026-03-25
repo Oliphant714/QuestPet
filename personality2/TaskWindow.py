@@ -1,6 +1,7 @@
 import tkinter as tk
 # from tkinter import *
 import threading
+from datetime import datetime
 
 class TaskWindow:
     def __init__(self, task_manager):
@@ -57,6 +58,122 @@ class TaskWindow:
         close_button.pack(pady=10)
 
         self.window.mainloop()
+
+    def add_task(self):
+        popup = tk.Toplevel(self.window)
+        popup.title("Add Task")
+        popup.geometry("300x200")
+
+        tk.Label(popup, text="Title").pack(pady=5)
+        title_entry = tk.Entry(popup)
+        title_entry.pack(pady=5)
+
+        tk.Label(popup, text="Description").pack(pady=5)
+        description_entry = tk.Entry(popup)
+        description_entry.pack(pady=5)
+
+        tk.Label(popup, text="Difficulty").pack(pady=5)
+        difficulty_var = tk.StringVar(value="Easy")
+        difficulty_dropdown = tk.OptionMenu(popup, difficulty_var, "Easy", "Medium", "Hard")
+        difficulty_dropdown.pack(pady=5)
+
+        tk.Label(popup, text="Due Date (YYYY-MM-DD)").pack(pady=5)
+        due_date_entry = tk.Entry(popup)
+        due_date_entry.pack(pady=5)
+
+        def save_task():
+            title = title_entry.get()
+            description = description_entry.get()
+            difficulty = difficulty_var.get().lower()
+            due_date_str = due_date_entry.get()
+            due_date = None
+            if due_date_str:
+                try:
+                    due_date = datetime.strptime(due_date_str, "%Y-%m-%d")
+                except ValueError:
+                    tk.messagebox.showerror("Invalid Date", "Please enter a valid date in YYYY-MM-DD format.")
+                    return
+
+            self.task_manager.add_task(title, description, difficulty, due_date)
+            self.refresh()
+            popup.destroy()
+        save_button = tk.Button(popup, text="Save", command=save_task)
+        save_button.pack(pady=10)
+
+    def complete_task(self):
+        selected = self.active_listbox.curselection()
+        if not selected:
+            tk.messagebox.showwarning("No Selection", "Please select a task to complete.")
+            return
+        index = selected[0]
+        task = self.task_manager.active_tasks[index]
+        
+        self.task_manager.complete_task(task.id)
+        self.refresh()
+
+    def delete_task(self):
+        selected = self.active_listbox.curselection()
+        if not selected:
+            tk.messagebox.showwarning("No Selection", "Please select a task to delete.")
+            return
+        index = selected[0]
+        task = self.task_manager.active_tasks[index]
+        
+        self.task_manager.active_tasks.remove(task)
+        self.refresh()
+
+    def edit_task(self):
+        selected = self.active_listbox.curselection()
+        if not selected:
+            tk.messagebox.showwarning("No Selection", "Please select a task to edit.")
+            return
+        index = selected[0]
+        task = self.task_manager.active_tasks[index]
+
+        popup = tk.Toplevel(self.window)
+        popup.title("Edit Task")
+        popup.geometry("300x200")
+
+        tk.Label(popup, text="Title").pack(pady=5)
+        title_entry = tk.Entry(popup)
+        title_entry.insert(0, task.title)
+        title_entry.pack(pady=5)
+
+        tk.Label(popup, text="Description").pack(pady=5)
+        description_entry = tk.Entry(popup)
+        description_entry.insert(0, task.description)
+        description_entry.pack(pady=5)
+
+        tk.Label(popup, text="Difficulty").pack(pady=5)
+        difficulty_var = tk.StringVar(value=task.difficulty.capitalize())
+        difficulty_dropdown = tk.OptionMenu(popup, difficulty_var, "Easy", "Medium", "Hard")
+        difficulty_dropdown.pack(pady=5)
+
+        tk.Label(popup, text="Due Date (YYYY-MM-DD)").pack(pady=5)
+        due_date_entry = tk.Entry(popup)
+        if task.due:
+            due_date_entry.insert(0, task.due.strftime("%Y-%m-%d"))
+        due_date_entry.pack(pady=5)
+
+        def save_changes():
+            task.title = title_entry.get()
+            task.description = description_entry.get()
+            task.difficulty = difficulty_var.get().lower()
+            due_date_str = due_date_entry.get()
+            if due_date_str:
+                try:
+                    task.due = datetime.strptime(due_date_str, "%Y-%m-%d")
+                except ValueError:
+                    tk.messagebox.showerror("Invalid Date", "Please enter a valid date in YYYY-MM-DD format.")
+                    return
+            else:
+                task.due = None
+
+            self.refresh()
+            popup.destroy()
+        
+        save_button = tk.Button(popup, text="Save Changes", command=save_changes)
+        save_button.pack(pady=10)
 
     def refresh(self):
         self.active_listbox.delete(0, tk.END)

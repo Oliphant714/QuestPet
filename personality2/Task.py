@@ -21,3 +21,4 @@ class Task:
 
     def calculate_xp(self, difficulty):
         base = {"easy": 10, "medium": 20, "hard": 40}[difficulty]
+        return base
