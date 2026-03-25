@@ -44,6 +44,13 @@ class PetRenderer:
         self.current_state = "idle"
         self.frame_index = 0
 
+    def bring_to_front(self):
+        win32gui.SetWindowPos(
+            self.hwnd,
+            win32con.HWND_TOPMOST,
+            self.x, self.y, 0, 0,
+            win32con.SWP_NOSIZE)
+
     def load_animation(self, folder_path):
         frames = []
         for file in sorted(os.listdir(folder_path)):
@@ -70,13 +77,6 @@ class PetRenderer:
             self.x -= self.speed
         elif self.current_state == "walking_right":
             self.x += self.speed
-
-        # # Movement logic
-        # if self.current_state == "walking_left":
-        #     self.x -= self.speed
-        # elif self.current_state == "walking_right":
-        #     self.x += self.speed
-        
 
         win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, int(self.x), int(self.y), 0, 0,
                               win32con.SWP_NOSIZE)

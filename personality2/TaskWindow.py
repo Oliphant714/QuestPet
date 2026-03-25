@@ -5,7 +5,7 @@ import threading
 class TaskWindow:
     def __init__(self):
         self.window = None
-
+        self.pet_renderer = None
     def open(self):
         if self.window is not None:
             try:
@@ -15,6 +15,9 @@ class TaskWindow:
         threading.Thread(target=self.create_window, daemon=True).start()
 
     def create_window(self):
+        # task_window = TaskWindow(task_manager, event_router)
+        # task_window.pet_renderer = renderer
+
         self.window = tk.Tk()
         self.window.title("Tasks")
         self.window.geometry("400x300")
@@ -50,8 +53,8 @@ class TaskWindow:
         if self.window:
             self.window.destroy()
             self.window = None
-            if hasattr(self, "pet_renderer"):
-                self.pet_renderer.bring.to_front()
+            if self.pet_renderer:
+                self.pet_renderer.bring_to_front()
 
 class ScrollableFrame(tk.Frame):
     def __init__(self, parent, *args, **kwargs):

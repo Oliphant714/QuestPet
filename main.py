@@ -14,10 +14,14 @@ from personality2.TaskWindow import TaskWindow
 import personality2.Task as Task
 from personality2.Task import Task
 
+import personality2.TaskManager as TaskManager
+from personality2.TaskManager import TaskManager
+
 def main():
 
     renderer = PetRenderer()
     task_window = TaskWindow()
+    task_window.pet_renderer = renderer
     animation = PetAnimation(renderer)
     renderer.task_window = task_window
     renderer.run()

@@ -66,3 +66,6 @@
 
 # # --- Start App ---
 # window.mainloop()
+
+# Link to AI research
+# https://github.com/R37r0-Gh057/pyCatAI-pet/blob/main/lib/CommentGenerator.py
