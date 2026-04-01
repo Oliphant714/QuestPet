@@ -1,4 +1,5 @@
 QuestPet (Update)
+Completion of this code was accelerated by AI and contributed to by my wife.
 
 QuestPet is a prototype desktop companion designed to blend productivity tracking, gamification, and personality-driven interaction. At its core, QuestPet is a growing digital creature (currently a dragon named Ember) that reacts to user behavior such as completing tasks, idling, and investing in self-improvement.
 
