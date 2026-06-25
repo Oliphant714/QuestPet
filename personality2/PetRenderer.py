@@ -5,7 +5,7 @@ import win32con
 import win32api
 
 class PetRenderer:
-    def __init__(self):
+    def __init__(self, event_router=None):
         os.environ['SDL_VIDEO_WINDOW_POS'] = '600,958'
         pygame.init()
 
@@ -17,6 +17,13 @@ class PetRenderer:
         self.hwnd = pygame.display.get_wm_info()['window']
         self.x, self.y = 600, 958
         self.speed = 10
+        self.default_state = "idle"
+        self.event_router = event_router
+        self.task_window = None
+        self.last_user_activity = pygame.time.get_ticks()
+        self.last_idle_notification = 0
+        self.idle_threshold_ms = 10000
+        self.idle_repeat_ms = 15000
 
         win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, self.x, self.y, 0, 0,
                               win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
@@ -59,6 +66,8 @@ class PetRenderer:
         return frames
 
     def set_state(self, new_state):
+        if new_state not in self.animations:
+            new_state = self.default_state
         self.current_state = new_state
         self.frame_index = 0
 
@@ -90,6 +99,9 @@ class PetRenderer:
 
 
     def handle_event(self, event):
+        if event.type in (pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONDOWN, pygame.MOUSEMOTION):
+            self.last_user_activity = pygame.time.get_ticks()
+
         if event.type == pygame.QUIT:
             return False
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -115,6 +127,23 @@ class PetRenderer:
                     self.frame_index = 0
         return True
 
+    def check_idle_state(self):
+        if self.event_router is None:
+            return
+
+        now = pygame.time.get_ticks()
+        idle_elapsed = now - self.last_user_activity
+        if idle_elapsed < self.idle_threshold_ms:
+            return
+
+        if now - self.last_idle_notification < self.idle_repeat_ms:
+            return
+
+        response = self.event_router.on_idle()
+        self.last_idle_notification = now
+        if self.task_window is not None and hasattr(self.task_window, "set_status_message"):
+            self.task_window.set_status_message(response)
+
     def run(self):
         running = True
         while running:
@@ -125,5 +154,6 @@ class PetRenderer:
 
             self.update()
             self.draw()
+            self.check_idle_state()
 
         pygame.quit()

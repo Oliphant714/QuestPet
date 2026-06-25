@@ -80,3 +80,4 @@ out/
 coverage/
 *.tgz
 instinct-system-checklist.txt
+questpet_tasks.json
