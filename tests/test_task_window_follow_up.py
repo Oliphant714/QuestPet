@@ -2,11 +2,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from personality2.PetCore import PetCore
-from personality2.PetEventRouter import PetEventRouter
-from personality2.PetMind import PetMind
-from personality2.PetAnimation import PetAnimation
-from personality2.PetVoice import PetVoice
 from personality2.TaskManager import TaskManager
 from personality2.TaskWindow import TaskWindow
 

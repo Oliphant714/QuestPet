@@ -1,0 +1,93 @@
+name: QuestPet CI/CD
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ruff pygame
+
+      - name: Build project
+        run: |
+          python -m compileall .
+
+      - name: Lint project
+        run: |
+          ruff check .
+
+      - name: Test project
+        env:
+          SDL_VIDEODRIVER: dummy
+        run: |
+          python -m unittest discover -s tests
+
+      - name: Run e2e smoke test
+        env:
+          SDL_VIDEODRIVER: dummy
+        run: |
+          python -m unittest tests.test_e2e_smoke
+
+      - name: Zip build artifacts
+        run: |
+          mkdir -p dist
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+
+          archive_path = Path("dist/questpet-artifacts.zip")
+          include_paths = [
+            Path("README.md"),
+            Path("main.py"),
+            Path("pet_renderer.py"),
+            Path("recycling.py"),
+            Path("pyproject.toml"),
+            Path("questpet_tasks.json"),
+            Path("personality1"),
+            Path("personality2"),
+            Path("visuals"),
+            Path("tests"),
+            Path("docs"),
+          ]
+
+          with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for include_path in include_paths:
+              if include_path.is_dir():
+                for file_path in include_path.rglob("*"):
+                  if file_path.is_file():
+                    archive.write(file_path, file_path.as_posix())
+              elif include_path.is_file():
+                archive.write(include_path, include_path.as_posix())
+          PY
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: questpet-artifacts
+          path: dist/questpet-artifacts.zip
+
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/questpet-artifacts.zip

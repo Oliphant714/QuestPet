@@ -1,5 +1,7 @@
+import tempfile
 import unittest
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from personality2.PetAnimation import PetAnimation
 from personality2.PetCore import PetCore
@@ -20,14 +22,19 @@ class FakeRenderer:
 
 class InstinctSystemIntegrationTests(unittest.TestCase):
     def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.storage_path = Path(self.temp_dir.name) / "tasks.json"
         Task.next_id = 1
         self.core = PetCore()
         self.mind = PetMind()
         self.voice = PetVoice()
         self.renderer = FakeRenderer()
         self.animation = PetAnimation(self.renderer)
-        self.task_manager = TaskManager()
+        self.task_manager = TaskManager(storage_path=self.storage_path)
         self.router = PetEventRouter(self.core, self.mind, self.voice, self.animation, task_manager=self.task_manager)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
     def test_task_completion_routes_through_play_mode(self):
         task = self.task_manager.add_task("Finish notes", "Wrap up the session", difficulty="medium")

@@ -1,6 +1,5 @@
 import os
 import tkinter as tk
-import random
 from win32api import GetMonitorInfo, MonitorFromPoint
 
 # --- Dragon States ---

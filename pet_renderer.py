@@ -1,4 +1,3 @@
-from turtle import speed
 import pygame
 import sys
 import os

@@ -21,7 +21,7 @@ class TaskWindow:
         if self.window is not None:
             try:
                 self.window.destroy()
-            except:
+            except Exception:
                 pass
         threading.Thread(target=self.create_window, daemon=True).start()
 
