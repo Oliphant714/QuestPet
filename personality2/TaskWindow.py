@@ -81,6 +81,8 @@ class TaskWindow:
         close_button = tk.Button(scroll_area.scrollable_frame, text="Close", command=self.close)
         close_button.pack(pady=10)
 
+        self.refresh()
+
         self.window.mainloop()
 
     def apply_mode_selection(self, selection):
