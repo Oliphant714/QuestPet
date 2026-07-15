@@ -18,6 +18,14 @@ class PetRenderer:
         self.x, self.y = 600, 958
         self.speed = 10
         self.default_state = "idle"
+
+        self.screen_width = win32api.GetSystemMetrics(0)
+        self.screen_height = win32api.GetSystemMetrics(1)
+        self.min_x = 0
+        self.max_x = self.screen_width - self.WIDTH
+        self.min_y = 0
+        self.max_y = self.screen_height - self.HEIGHT
+
         self.event_router = event_router
         self.task_window = None
         self.last_user_activity = pygame.time.get_ticks()
@@ -84,11 +92,16 @@ class PetRenderer:
                 self.current_state = "idle"
         elif self.current_state == "walking_left":
             self.x -= self.speed
+            if self.x <= self.min_x:
+                self.x = self.min_x
+                self.set_state("idle")
         elif self.current_state == "walking_right":
             self.x += self.speed
+            if self.x >= self.max_x:
+                self.x = self.max_x
+                self.set_state("idle")
 
-        win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, int(self.x), int(self.y), 0, 0,
-                              win32con.SWP_NOSIZE)
+        win32gui.SetWindowPos(self.hwnd, win32con.HWND_TOPMOST, int(self.x), int(self.y), 0, 0, win32con.SWP_NOSIZE)
 
     def draw(self):
         self.screen.fill((255, 0, 255))
