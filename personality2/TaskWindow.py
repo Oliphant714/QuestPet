@@ -111,8 +111,14 @@ class TaskWindow:
                 self.mode_var.set("Auto")
 
     def set_status_message(self, message):
-        if self.status_var is not None:
+        if self.window is None or self.status_var is None:
+            return
+        try:
             self.status_var.set(message)
+        except RuntimeError:
+            # Window was torn down between the check above and this call
+            # (e.g. closed on another thread) — safe to ignore.
+            pass
 
     def add_task(self):
         popup = tk.Toplevel(self.window)
@@ -273,6 +279,11 @@ class TaskWindow:
             self.task_manager.save_state()
             self.window.destroy()
             self.window = None
+            self.status_var = None
+            self.mode_status_var = None
+            self.mode_var = None
+            self.active_listbox = None
+            self.completed_listbox = None
             if self.pet_renderer:
                 self.pet_renderer.bring_to_front()
 
