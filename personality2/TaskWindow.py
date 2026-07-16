@@ -125,7 +125,8 @@ class TaskWindow:
     def add_task(self):
         popup = tk.Toplevel(self.window)
         popup.title("Add Task")
-        popup.geometry("300x200")
+        popup.geometry("320x340")
+        popup.resizable(False, False)
 
         tk.Label(popup, text="Title").pack(pady=5)
         title_entry = tk.Entry(popup)
@@ -204,7 +205,8 @@ class TaskWindow:
 
         popup = tk.Toplevel(self.window)
         popup.title("Edit Task")
-        popup.geometry("300x200")
+        popup.geometry("320x340")
+        popup.resizable(False, False)
 
         tk.Label(popup, text="Title").pack(pady=5)
         title_entry = tk.Entry(popup)
